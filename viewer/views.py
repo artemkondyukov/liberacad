@@ -1,33 +1,26 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from viewer.serializers import UserSerializer, GroupSerializer
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+from rest_framework import generics
+
 from viewer.models import Institution
-from viewer.serializers import InstitutionSerializer
+from viewer.serializers import InstitutionSerializer, DicomImageSerializer
+from viewer.models import DicomImage
 
 
-@csrf_exempt
-def institution_list(request):
-    """
-    List all institutions, or create a new one.
-    """
-    if request.method == 'GET':
-        snippets = Institution.objects.all()
-        serializer = InstitutionSerializer(snippets, many=True)
-        renderer = JSONRenderer()
-        return HttpResponse(renderer.render(serializer.data))
+class InstitutionList(generics.ListCreateAPIView):
+    queryset = Institution.objects.all()
+    serializer_class = InstitutionSerializer
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = InstitutionSerializer(data=data)
-        renderer = JSONRenderer()
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(renderer.render(serializer.data), status=201)
-        return HttpResponse(renderer.render(serializer.errors), status=400)
+
+class InstitutionDetail(generics.RetrieveUpdateAPIView):
+    queryset = Institution.objects.all()
+    serializer_class = InstitutionSerializer
+
+
+class DicomImageList(generics.ListCreateAPIView):
+    queryset = DicomImage.objects.all()
+    serializer_class = DicomImageSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -44,8 +37,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
-
-# Create your views here.
-def index(request):
-    return HttpResponse("FUCK YOU!")

@@ -36,6 +36,7 @@ class TrainableModel(models.Model):
 
 # Describes a medical image
 class DicomImage(models.Model):
+    owner = models.ForeignKey('auth.User', related_name='dicom_images', default=1)
     filename = models.TextField(max_length=255)
     acquisition_date = models.DateField()
     source = models.ForeignKey(Institution, on_delete=models.SET_NULL, null=True)
