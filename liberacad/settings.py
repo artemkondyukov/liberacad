@@ -64,7 +64,7 @@ ROOT_URLCONF = 'liberacad.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['viewer/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
