@@ -12,7 +12,8 @@ class InstitutionSerializer(serializers.HyperlinkedModelSerializer):
 class DicomImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DicomImage
-        fields = ('pk', 'filename', 'acquisition_date', 'source')
+        source = InstitutionSerializer(required=False)
+        fields = ('pk', 'filename', 'acquisition_date')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
