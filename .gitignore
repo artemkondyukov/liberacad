@@ -1,5 +1,8 @@
 .django-sensitive-settings
 
+diagrams/
+liberacad_db/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
