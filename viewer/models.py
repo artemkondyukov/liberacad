@@ -28,24 +28,26 @@ class Diagnosis(models.Model):
 
 # Describes a model which can be used so as to obtain contours
 class TrainableModel(models.Model):
-    structureFilename = models.TextField(max_length=255)
-    weightsFilename = models.TextField(max_length=255)
+    structureFile = models.FileField(upload_to="data/trainable_models/structures/",
+                                     default="data/trainable_models/structures/default.yaml")
+    weightsFile = models.FileField(upload_to="data/trainable_models/weights",
+                                   default="data/trainable_models/weights/default.h5")
     creationDate = models.DateField()
     description = models.TextField(max_length=2047)
 
 
 # Describes a medical image
 class DicomImage(models.Model):
-    owner = models.ForeignKey('auth.User', related_name='dicom_images', default=1)
-    filename = models.TextField(max_length=255)
+    owner = models.ForeignKey('auth.User', related_name='dicom_images', default=2)
+    file = models.FileField(upload_to="data/dicom_images/", default="data/dicom_images/default.dcm")
     acquisition_date = models.DateField()
     source = models.ForeignKey(Institution, on_delete=models.SET_NULL, null=True)
 
 
 # Describes a contour of some structure (organ or pathology)
 class Contour(models.Model):
-    filename = models.TextField(max_length=255)
-    maskFilename = models.TextField(max_length=255)
+    contourFile = models.FileField(upload_to="data/contour_files/", default="/data/contour_files/default.npz")
+    maskFile = models.FileField(upload_to="data/mask_files/", default="/data/mask_files/default.npz")
     byHandObtained = models.BooleanField()
     producedBy = models.ForeignKey(TrainableModel, on_delete=models.SET_NULL, null=True)
 
