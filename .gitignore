@@ -1,5 +1,6 @@
 .django-sensitive-settings
 
+data/
 diagrams/
 liberacad_db/
 
