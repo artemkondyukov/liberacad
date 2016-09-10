@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from viewer.models import Institution, DicomImage
+from viewer.models import Institution, DicomImage, Contour
 
 
 class InstitutionSerializer(serializers.HyperlinkedModelSerializer):
@@ -9,22 +9,31 @@ class InstitutionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('pk', 'title')
 
 
+class ContourSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Contour
+        fields = ('pk', 'contourFile', 'maskFile', 'dicomImage', 'by')
+
+
 class DicomImageSerializer(serializers.HyperlinkedModelSerializer):
+    contourFiles = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    source = InstitutionSerializer(required=False)
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = DicomImage
-        source = InstitutionSerializer(required=False)
-        fields = ('pk', 'filename', 'acquisition_date')
+        fields = ('pk', 'source', 'owner', 'file', 'acquisitionDate', 'contourFiles')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    dicom_images = serializers.PrimaryKeyRelatedField(many=True, queryset=DicomImage.objects.all())
+    dicomImages = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups', 'dicom_images')
+        fields = ('username', 'email', 'groups', 'dicomImages')
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
-        fields = ('url', 'name')
+        fields = ('name', )

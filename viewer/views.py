@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from viewer.serializers import UserSerializer, GroupSerializer
 from rest_framework import generics
+from rest_framework.response import Response
 
 from viewer.models import Institution
 from viewer.serializers import InstitutionSerializer, DicomImageSerializer
@@ -21,6 +22,24 @@ class InstitutionDetail(generics.RetrieveUpdateAPIView):
 class DicomImageList(generics.ListCreateAPIView):
     queryset = DicomImage.objects.all()
     serializer_class = DicomImageSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class DicomImageDetail(generics.RetrieveAPIView):
+    queryset = DicomImage.objects.all()
+    serializer_class = DicomImageSerializer
+
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):

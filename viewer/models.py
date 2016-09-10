@@ -22,7 +22,7 @@ class Disease(models.Model):
 class Diagnosis(models.Model):
     dateOfConclusion = models.DateField()
     doctorsName = models.TextField(max_length=255)
-    disease = models.ForeignKey(Disease, on_delete=models.SET_NULL, null=True)
+    disease = models.ForeignKey(Disease, related_name="diagnoses", on_delete=models.SET_NULL, null=True)
     comment = models.TextField(max_length=2047)
 
 
@@ -38,9 +38,9 @@ class TrainableModel(models.Model):
 
 # Describes a medical image
 class DicomImage(models.Model):
-    owner = models.ForeignKey('auth.User', related_name='dicom_images', default=2)
+    owner = models.ForeignKey('auth.User', related_name='dicomImages', default=2)
     file = models.FileField(upload_to="data/dicom_images/", default="data/dicom_images/default.dcm")
-    acquisition_date = models.DateField()
+    acquisitionDate = models.DateField()
     source = models.ForeignKey(Institution, on_delete=models.SET_NULL, null=True)
 
 
@@ -49,7 +49,8 @@ class Contour(models.Model):
     contourFile = models.FileField(upload_to="data/contour_files/", default="/data/contour_files/default.npz")
     maskFile = models.FileField(upload_to="data/mask_files/", default="/data/mask_files/default.npz")
     byHandObtained = models.BooleanField()
-    producedBy = models.ForeignKey(TrainableModel, on_delete=models.SET_NULL, null=True)
+    dicomImage = models.ForeignKey(DicomImage, on_delete=models.SET_NULL, null=True, related_name="contourFiles")
+    producedBy = models.ForeignKey(TrainableModel, on_delete=models.SET_NULL, null=True, related_name="contourFiles")
 
     def clean(self):
         # A contour can be produced either by hand or by model, but not both
@@ -62,4 +63,4 @@ class OrganContour(Contour):
 
 
 class PathologyContour(Contour):
-    diagnosis = models.ForeignKey(Diagnosis, on_delete=models.SET_NULL, null=True)
+    diagnosis = models.ForeignKey(Diagnosis, related_name="pathologyContours", on_delete=models.SET_NULL, null=True)
