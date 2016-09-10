@@ -17,8 +17,8 @@ class ContourSerializer(serializers.HyperlinkedModelSerializer):
 
 class DicomImageSerializer(serializers.HyperlinkedModelSerializer):
     contourFiles = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    source = InstitutionSerializer(required=False)
-    owner = serializers.ReadOnlyField(source='owner.username')
+    source = InstitutionSerializer(required=False, read_only=True)
+    owner = serializers.ReadOnlyField(source='owner.username', read_only=True)
 
     class Meta:
         model = DicomImage
