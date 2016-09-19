@@ -1,7 +1,10 @@
+from django import template
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
 from django.core.exceptions import ValidationError
+
+import os
 
 LEXERS = [item for item in get_all_lexers() if item[1]]
 LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
@@ -29,9 +32,9 @@ class Diagnosis(models.Model):
 # Describes a model which can be used so as to obtain contours
 class TrainableModel(models.Model):
     structureFile = models.FileField(upload_to="viewer/data/trainable_models/structures/",
-                                     default="data/trainable_models/structures/default.yaml")
+                                     default="viewer/data/trainable_models/structures/default.yaml")
     weightsFile = models.FileField(upload_to="viewer/data/trainable_models/weights",
-                                   default="data/trainable_models/weights/default.h5")
+                                   default="viewer/data/trainable_models/weights/default.h5")
     creationDate = models.DateField()
     description = models.TextField(max_length=2047)
 
@@ -39,15 +42,21 @@ class TrainableModel(models.Model):
 # Describes a medical image
 class DicomImage(models.Model):
     owner = models.ForeignKey('auth.User', related_name='dicomImages', default=2)
-    file = models.FileField(upload_to="viewer/data/dicom_images/", default="data/dicom_images/default.dcm")
+    file = models.FileField(upload_to="viewer/data/dicom_images/",
+                            default="viewer/data/dicom_images/default.dcm")
     acquisitionDate = models.DateField()
     source = models.ForeignKey(Institution, on_delete=models.SET_NULL, null=True)
+
+    def base_filename(self):
+        return os.path.basename(self.file.path)
 
 
 # Describes a contour of some structure (organ or pathology)
 class Contour(models.Model):
-    contourFile = models.FileField(upload_to="viewer/data/contour_files/", default="/data/contour_files/default.npz")
-    maskFile = models.FileField(upload_to="viewer/data/mask_files/", default="/data/mask_files/default.npz")
+    contourFile = models.FileField(upload_to="viewer/data/contour_files/",
+                                   default="viewer//data/contour_files/default.npz")
+    maskFile = models.FileField(upload_to="viewer/data/mask_files/",
+                                default="viewer/data/mask_files/default.npz")
     byHandObtained = models.BooleanField()
     dicomImage = models.ForeignKey(DicomImage, on_delete=models.SET_NULL, null=True, related_name="contourFiles")
     producedBy = models.ForeignKey(TrainableModel, on_delete=models.SET_NULL, null=True, related_name="contourFiles")
