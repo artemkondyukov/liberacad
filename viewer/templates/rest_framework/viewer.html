@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  {% load static %}
+  <link rel="stylesheet" href="{% static "viewer/css/page.css" %}">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <style>
@@ -70,21 +72,32 @@
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-2 sidenav">
-{#      {% for image in dicomImage. %}#}
+      <h2>Image files</h2>
+      <div class="list-group">
+      {% for image in dicomImages %}
+          {% if pk == image.id|stringformat:"s" %}
+            <a href="/viewer/{{ image.pk }}" class="list-group-item active">{{ image.base_filename }}</a>
+          {% else %}
+            <a href="/viewer/{{ image.pk }}" class="list-group-item">{{ image.base_filename }}</a>
+          {% endif %}
+      {% endfor %}
+      </div>
     </div>
     <div class="col-sm-8 text-left">
-      <h1>Dicom image viewer</h1>
       <hr>
-      <h3>Test</h3>
-      <p>Lorem ipsum...</p>
+        {% if pk %}
+            <div class="figure-wrapper">
+                <figure class="image-container target">
+                    <img src="/viewer/api/dicom_images/plain/{{ pk }}">
+                </figure>
+            </div>
+        {% endif %}
     </div>
     <div class="col-sm-2 sidenav">
-      <div class="well">
-        <p>ADS</p>
-      </div>
-      <div class="well">
-        <p>ADS</p>
-      </div>
+      <h2>Tools</h2>
+      <button class="btn btn-default tool" id="lung_detect">
+      <button class="btn btn-default tool" id="rib_detect">
+      <button class="btn btn-default tool" id="rib_suppress">
     </div>
   </div>
 </div>
