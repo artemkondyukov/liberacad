@@ -1,3 +1,6 @@
+*.sh
+.ipynb_checkpoints
+
 .django-sensitive-settings
 
 data/
