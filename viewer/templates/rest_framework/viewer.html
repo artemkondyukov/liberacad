@@ -73,7 +73,7 @@
   <div class="row content">
     <div class="col-sm-2 sidenav">
       <h2>Image files</h2>
-      <div class="list-group">
+      <div class="list-group pre-scrollable">
       {% for image in dicomImages %}
           {% if pk == image.id|stringformat:"s" %}
             <a href="/viewer/{{ image.pk }}" class="list-group-item active">{{ image.base_filename }}</a>
@@ -83,21 +83,22 @@
       {% endfor %}
       </div>
     </div>
-    <div class="col-sm-8 text-left">
+    <div class="col-sm-8" id="viewport">
       <hr>
-        {% if pk %}
-            <div class="figure-wrapper">
-                <figure class="image-container target">
+        <div class="figure-wrapper">
+            <figure class="image-container target">
+                {% if pk %}
                     <img src="/viewer/api/dicom_images/plain/{{ pk }}">
-                </figure>
-            </div>
-        {% endif %}
+                {% endif %}
+            </figure>
+        </div>
     </div>
     <div class="col-sm-2 sidenav">
       <h2>Tools</h2>
-      <button class="btn btn-default tool" id="lung_detect">
-      <button class="btn btn-default tool" id="rib_detect">
-      <button class="btn btn-default tool" id="rib_suppress">
+      <button class="btn btn-default tool" id="lung_detect"></button>
+      <button class="btn btn-default tool" id="rib_detect"></button>
+      <button class="btn btn-default tool" id="rib_suppress"></button>
+      <button class="btn btn-default tool" id="plain_xray"></button>
     </div>
   </div>
 </div>
