@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', admin.site.urls),
     url(r'^viewer/', include('viewer.urls')),
-] + static(settings.VIEWER_MEDIA_URL, document_root=settings.VIEWER_MEDIA_ROOT)
+] + static(settings.VIEWER_MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = format_suffix_patterns(urlpatterns)

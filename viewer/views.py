@@ -52,7 +52,7 @@ class DicomImageList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         print(self.request.data)
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user, source=Institution.objects.get(pk=self.request.data["source"]))
 
 
 class DicomImageDetail(generics.RetrieveAPIView):
@@ -98,7 +98,7 @@ class DicomImageRepresentation(generics.RetrieveAPIView):
         elif len(dicomImages) == 0:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
-        pixel_array = dicom.read_file(os.path.join(settings.VIEWER_MEDIA_ROOT, str(dicomImages[0].file)))\
+        pixel_array = dicom.read_file(os.path.join(settings.MEDIA_ROOT, str(dicomImages[0].file)))\
             .pixel_array
         print(pixel_array.min(), pixel_array.max())
         # image = Image.fromarray(pixel_array)

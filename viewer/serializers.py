@@ -20,13 +20,13 @@ class ContourSerializer(serializers.HyperlinkedModelSerializer):
 
 class DicomImageSerializer(serializers.HyperlinkedModelSerializer):
     # contourFiles = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    source = InstitutionSerializer(required=False, read_only=True)
+    source = InstitutionSerializer(required=False)
     owner = serializers.ReadOnlyField(source='owner.username', read_only=True)
     acquisitionDate = serializers.DateField(read_only=True)
 
     def validate(self, data):
-        acquisitionDate = datetime.strptime(dicom.read_file(data["file"]).ContentDate, "%Y%m%d").date()
-        data["acquisitionDate"] = acquisitionDate
+        acquisition_date = datetime.strptime(dicom.read_file(data["file"]).ContentDate, "%Y%m%d").date()
+        data["acquisitionDate"] = acquisition_date
         return data
 
     class Meta:

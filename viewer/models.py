@@ -54,7 +54,7 @@ class DicomImage(models.Model):
 # Describes a contour of some structure (organ or pathology)
 class Contour(models.Model):
     contourFile = models.FileField(upload_to="viewer/data/contour_files/",
-                                   default="viewer//data/contour_files/default.npz")
+                                   default="viewer/data/contour_files/default.npz")
     maskFile = models.FileField(upload_to="viewer/data/mask_files/",
                                 default="viewer/data/mask_files/default.npz")
     byHandObtained = models.BooleanField()
