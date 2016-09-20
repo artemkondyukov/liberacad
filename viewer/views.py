@@ -11,16 +11,15 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework import status
 
 import dicom
-import numpy as np
 import os
-# from png import Image
 import png
-from wsgiref.util import FileWrapper
 
 from viewer.models import Institution
 from viewer.serializers import InstitutionSerializer, DicomImageSerializer
 from viewer.models import DicomImage
 from viewer.serializers import UserSerializer, GroupSerializer
+
+from viewer.backend import LungSegmenter
 
 
 class InstitutionList(generics.ListCreateAPIView):
@@ -98,10 +97,9 @@ class DicomImageRepresentation(generics.RetrieveAPIView):
         elif len(dicomImages) == 0:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
-        pixel_array = dicom.read_file(os.path.join(settings.MEDIA_ROOT, str(dicomImages[0].file)))\
-            .pixel_array
-        print(pixel_array.min(), pixel_array.max())
-        # image = Image.fromarray(pixel_array)
+        pixel_array = dicom.read_file(os.path.join(settings.MEDIA_ROOT, str(dicomImages[0].file))).pixel_array
+        segmenter = LungSegmenter()
+        pixel_array = segmenter.process(pixel_array)
         image = png.from_array(pixel_array, 'L;16')
         response = HttpResponse(content_type="image/png")
         image.save(response)

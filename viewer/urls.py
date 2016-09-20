@@ -14,7 +14,8 @@ urlpatterns = [
 
     url(r'^api/dicom_images/$', views.DicomImageList.as_view()),
     url(r'^api/dicom_images/(?P<pk>[0-9]+)', views.DicomImageDetail.as_view()),
-    url(r'^api/dicom_images/plain/(?P<pk>[0-9]+)', views.DicomImageRepresentation.as_view()),
+    url(r'^api/dicom_images/(?P<filter>[a-z]+)/(?P<pk>[0-9]+)/$',
+        views.DicomImageRepresentation.as_view()),
 
     url(r'^api/users/$', views.UserList.as_view()),
     url(r'^api/users/(?P<pk>[0-9]+)$', views.UserDetail.as_view()),
