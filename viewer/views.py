@@ -98,8 +98,17 @@ class DicomImageRepresentation(generics.RetrieveAPIView):
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
         pixel_array = dicom.read_file(os.path.join(settings.MEDIA_ROOT, str(dicomImages[0].file))).pixel_array
-        segmenter = LungSegmenter()
-        pixel_array = segmenter.process(pixel_array)
+
+        if kwargs["filter"] == "lung_segment":
+            segmenter = LungSegmenter()
+            pixel_array = segmenter.process(pixel_array)
+        elif kwargs["filter"] == "rib_segment":
+            segmenter = LungSegmenter()
+            pixel_array = segmenter.process(pixel_array)
+        elif kwargs["filter"] == "rib_suppress":
+            processor = LungSegmenter()
+            pixel_array = processor.process(pixel_array)
+
         image = png.from_array(pixel_array, 'L;16')
         response = HttpResponse(content_type="image/png")
         image.save(response)

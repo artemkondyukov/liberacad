@@ -88,17 +88,21 @@
         <div class="figure-wrapper">
             <figure class="image-container target">
                 {% if pk %}
-                    <img src="/viewer/api/dicom_images/plain/{{ pk }}">
+                    {% if filter %}
+                        <img id="main_image" src="/viewer/api/dicom_images/{{ filter }}/{{ pk }}">
+                    {% else %}
+                        <img id="main_image" src="/viewer/api/dicom_images/plain/{{ pk }}">
+                    {% endif %}
                 {% endif %}
             </figure>
         </div>
     </div>
     <div class="col-sm-2 sidenav">
       <h2>Tools</h2>
-      <button class="btn btn-default tool" id="lung_detect"></button>
-      <button class="btn btn-default tool" id="rib_detect"></button>
-      <button class="btn btn-default tool" id="rib_suppress"></button>
-      <button class="btn btn-default tool" id="plain_xray"></button>
+      <button class="btn btn-default tool" id="lung_detect" onclick="process_image('lung_segment')"></button>
+      <button class="btn btn-default tool" id="rib_detect" onclick="process_image('rib_segment')"></button>
+      <button class="btn btn-default tool" id="rib_suppress" onclick="process_image('rub_suppress')"></button>
+      <button class="btn btn-default tool" id="plain_xray" onclick="process_image('plain')"></button>
     </div>
   </div>
 </div>
@@ -108,5 +112,19 @@
 </footer>
 
 </body>
+
+<script>
+    function process_image(filter) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("main_image").src = "/viewer/api/dicom_images/" + filter + "/{{ pk }}";
+            }
+        };
+        xhttp.open("GET", "", true);
+        xhttp.send();
+    }
+</script>
+
 </html>
 

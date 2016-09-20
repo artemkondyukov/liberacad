@@ -22,7 +22,7 @@ h1 {
 
 /* region buttons */
 
-button.tool {
+button.btn.tool {
   width: 96px;
   height: 96px;
   margin: 5px;
@@ -44,7 +44,7 @@ button#rib_suppress {
 }
 
 button#plain_xray {
-  background: url("../images/plain_xray.png.jpg");
+  background: url("../images/plain_xray.png");
   background-size: contain;
 }
 
