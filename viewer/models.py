@@ -1,4 +1,4 @@
-from django import template
+from django.contrib.auth.models import User
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
@@ -14,6 +14,12 @@ STYLE_CHOICES = sorted((item, item) for item in get_all_styles())
 # Describes an organization where images were produced
 class Institution(models.Model):
     title = models.TextField(max_length=255)
+
+
+# Describes a doctor
+class Doctor(models.Model):
+    user = models.OneToOneField(User)
+    institution = models.ForeignKey(Institution, on_delete=models.SET_NULL, null=True)
 
 
 # Describes a disease which appears on X-ray images

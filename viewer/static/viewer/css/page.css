@@ -50,58 +50,26 @@ button#plain_xray {
 
 /* endregion */
 
-/* region figure */
-
-div#viewport {
-  position:relative;
-  margin:0 auto;
-  height:auto !important;
-  min-height: 100%;
-}
-
-.figure-wrapper {
-  text-align: center;
-  max-width: 100%;
-  min-height: 100vh;
-  margin-bottom: 10px;
-}
-
-.image-container {
-  display: inline-block;
-  max-width: 100%;
-  background: white;
-  padding: 10px;
-  margin: 5px 0;
-  border: 1px solid #e2e2e2;
-  border-bottom: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-}
-
-.image-container.target {
+.dropzone {
   min-width: 100%;
   min-height: 100vh;
   height:auto !important;
-}
 
-.image-container img {
+  display: inline-block;
   max-width: 100%;
-  min-height: 100%;
+  background: white;
+  border: 1px solid #e2e2e2;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 10px 10px 10px;
+  margin: 10px 0 10px 0;
+  font-size: 16px;
+  text-align: center;
 }
 
-.image-container .image-meta {
-  margin-top: 10px;
-  font-size: 12px;
-  text-align: left;
+.dropzone img {
+  max-width: 100%;
 }
-.image-container .image-meta a {
-  text-decoration: none;
-  color: #444;
-}
-.image-container .image-meta a:hover .image-meta-title {
-  text-decoration: underline;
-}
-
-/* endregion */
 
 .list-group-item.active {
   background-color: #222;

@@ -69,6 +69,7 @@
   </div>
 </nav>
 
+<script src="{% static "viewer/js/dropzone.js" %}"></script>
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-2 sidenav">
@@ -84,9 +85,9 @@
       </div>
     </div>
     <div class="col-sm-8" id="viewport">
-      <hr>
-        <div class="figure-wrapper">
-            <figure class="image-container target">
+            <div class="figure-wrapper box-input">
+            <form id="add-photos" class="dropzone" action="/viewer/api/dicom_images/" method="post">
+                {% csrf_token %}
                 {% if pk %}
                     {% if filter %}
                         <img id="main_image" src="/viewer/api/dicom_images/{{ filter }}/{{ pk }}">
@@ -94,8 +95,11 @@
                         <img id="main_image" src="/viewer/api/dicom_images/plain/{{ pk }}">
                     {% endif %}
                 {% endif %}
-            </figure>
-        </div>
+                <div class="fallback">
+                    <input name="file" type="file" multiple />
+                </div>
+            </form>
+            </div>
     </div>
     <div class="col-sm-2 sidenav">
       <h2>Tools</h2>
@@ -113,16 +117,42 @@
 
 </body>
 
+<script src="../../static/viewer/js/spin.min.js"></script>
 <script>
     function process_image(filter) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("main_image").src = "/viewer/api/dicom_images/" + filter + "/{{ pk }}";
-            }
+        var opts = {
+          lines: 13 // The number of lines to draw
+        , length: 28 // The length of each line
+        , width: 14 // The line thickness
+        , radius: 42 // The radius of the inner circle
+        , scale: 1 // Scales overall size of the spinner
+        , corners: 1 // Corner roundness (0..1)
+        , color: '#000' // #rgb or #rrggbb or array of colors
+        , opacity: 0.25 // Opacity of the lines
+        , rotate: 0 // The rotation offset
+        , direction: 1 // 1: clockwise, -1: counterclockwise
+        , speed: 1 // Rounds per second
+        , trail: 60 // Afterglow percentage
+        , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+        , zIndex: 2e9 // The z-index (defaults to 2000000000)
+        , className: 'spinner' // The CSS class to assign to the spinner
+        , top: '50%' // Top position relative to parent
+        , left: '50%' // Left position relative to parent
+        , shadow: false // Whether to render a shadow
+        , hwaccel: false // Whether to use hardware acceleration
+        , position: 'absolute' // Element positioning
         };
-        xhttp.open("GET", "", true);
-        xhttp.send();
+        var target = document.getElementById('viewport');
+        var spinner = new Spinner(opts).spin(target);
+
+        var targetImg = document.getElementById("main_image");
+        targetImg.onload = function () {
+            spinner.stop()
+        };
+        targetImg.onerror = function () {
+            spinner.stop()
+        };
+        targetImg.src = "/viewer/api/dicom_images/" + filter + "/{{ pk }}";
     }
 </script>
 

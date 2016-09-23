@@ -16,10 +16,10 @@ import png
 
 from viewer.models import Institution
 from viewer.serializers import InstitutionSerializer, DicomImageSerializer
-from viewer.models import DicomImage
+from viewer.models import DicomImage, Doctor
 from viewer.serializers import UserSerializer, GroupSerializer
 
-from viewer.backend import LungSegmenter
+from viewer.backend import LungSegmenter, RibSegmenter
 
 
 class InstitutionList(generics.ListCreateAPIView):
@@ -30,6 +30,17 @@ class InstitutionList(generics.ListCreateAPIView):
 class InstitutionDetail(generics.RetrieveUpdateAPIView):
     queryset = Institution.objects.all()
     serializer_class = InstitutionSerializer
+
+
+class DicomImageViewer(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'rest_framework/viewer.html'
+
+    def get(self, request, **kwargs):
+        dicom_images = DicomImage.objects.filter(owner=request.user)
+        pk = kwargs.get("pk", None)
+        return Response({'dicomImages': dicom_images, 'pk': pk})
 
 
 class DicomImageList(generics.ListCreateAPIView):
@@ -45,13 +56,9 @@ class DicomImageList(generics.ListCreateAPIView):
         serializer = DicomImageSerializer(queryset.filter(owner=self.request.user), many=True)
         return Response(serializer.data)
 
-    # def create(self, request, *args, **kwargs):
-    #     print(123)
-    #     return Response(None, status=status.HTTP_301_MOVED_PERMANENTLY)
-
     def perform_create(self, serializer):
-        print(self.request.data)
-        serializer.save(owner=self.request.user, source=Institution.objects.get(pk=self.request.data["source"]))
+        source = self.request.data.get("source", Doctor.objects.get(user_id=self.request.user.pk)).institution
+        serializer.save(owner=self.request.user, source=source)
 
 
 class DicomImageDetail(generics.RetrieveAPIView):
@@ -103,7 +110,7 @@ class DicomImageRepresentation(generics.RetrieveAPIView):
             segmenter = LungSegmenter()
             pixel_array = segmenter.process(pixel_array)
         elif kwargs["filter"] == "rib_segment":
-            segmenter = LungSegmenter()
+            segmenter = RibSegmenter()
             pixel_array = segmenter.process(pixel_array)
         elif kwargs["filter"] == "rib_suppress":
             processor = LungSegmenter()
@@ -113,14 +120,3 @@ class DicomImageRepresentation(generics.RetrieveAPIView):
         response = HttpResponse(content_type="image/png")
         image.save(response)
         return response
-
-
-class DicomImageViewer(APIView):
-    permission_classes = (IsAuthenticated, )
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'rest_framework/viewer.html'
-
-    def get(self, request, **kwargs):
-        dicom_images = DicomImage.objects.filter(owner=request.user)
-        pk = kwargs.get("pk", None)
-        return Response({'dicomImages': dicom_images, 'pk': pk})
